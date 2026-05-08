@@ -1,0 +1,84 @@
+    <Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\App.props" />
+
+    <PropertyGroup>
+        <TargetFrameworks>$(NetVersion)-ios;$(NetVersion)</TargetFrameworks>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>Repro2987</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <ApplicationTitle>Repro2987</ApplicationTitle>
+        <ApplicationId>com.companyname.repro2987</ApplicationId>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+        <DefaultLanguage>en-US</DefaultLanguage>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    </PropertyGroup>
+
+    <!-- CYCLONE_REMOVE_START -->
+    <!-- Only compile windows in debug mode -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);$(NetVersion)-windows10.0.22000.0</TargetFrameworks>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.22000.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.22000.0</TargetPlatformMinVersion>
+    </PropertyGroup>
+    <!-- CYCLONE_REMOVE_END -->
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|$(NetVersion)-android35.0|AnyCPU'">
+        <AndroidPackageFormat>apk</AndroidPackageFormat>
+        <RuntimeIdentifiers>android-arm;android-arm64;android-x64</RuntimeIdentifiers>
+        <AndroidKeyStore>True</AndroidKeyStore>
+        <AndroidSigningKeyStore>***</AndroidSigningKeyStore>
+        <AndroidSigningStorePass>***</AndroidSigningStorePass>
+        <AndroidSigningKeyAlias>***</AndroidSigningKeyAlias>
+        <AndroidSigningKeyPass>***</AndroidSigningKeyPass>
+    </PropertyGroup>
+
+    <!-- CYCLONE_REMOVE_START -->
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|$(NetVersion)-ios|AnyCPU'">
+        <CreatePackage>false</CreatePackage>
+        <CodesignProvision>*** (Ad Hoc Distribution)</CodesignProvision>
+        <CodesignKey>iPhone Distribution</CodesignKey>
+      <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+    </PropertyGroup>
+    <!-- CYCLONE_REMOVE_END -->
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|$(NetVersion)-ios|AnyCPU'">
+        <CreatePackage>true</CreatePackage>
+        <CodesignProvision>*** (App Store Distribution)</CodesignProvision>
+        <CodesignKey>iPhone Distribution</CodesignKey>
+        <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+        <UseInterpreter>true</UseInterpreter>
+        <MtouchLink>SdkOnly</MtouchLink>
+        <MtouchUseLlvm>False</MtouchUseLlvm>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" ForegroundScale="0.65" Color="#000000" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#212121" BaseSize="128,128" />
+        <MauiImage Include="Resources\Images\**" TintColor="#ffffff" />
+        <MauiImage Include="Resources\ImagesBig\**" BaseSize="192,192" />
+        <MauiFont Include="Resources\Fonts\**" />
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
+        <PackageReference Include="FFImageLoading.Maui" Version="1.2.9" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Maui.Controls.Maps" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.6" />
+        <PackageReference Include="Prism.DryIoc.Maui" Version="9.0.537" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <None Remove="*.db3" />
+        <EmbeddedResource Include="*.db3" />
+    </ItemGroup>
+
+</Project>
